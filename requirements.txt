@@ -3,4 +3,5 @@ requests==2.23.0
 pymysql
 werkzeug.security
 flaskext.mysql
+flask-mysqldb
 flask_table
