@@ -3,10 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import request, redirect, render_template, url_for
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost/flasktut'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost/flasktut'
 #app.config['SECRET_KEY'] = 'super-secret'
 #app.config['SECURITY_REGISTERABLE'] = True
-app.debug = True
+#app.debug = True
 db = SQLAlchemy(app)
 
 
