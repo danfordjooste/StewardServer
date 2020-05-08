@@ -1,7 +1,7 @@
-Flask==1.1.1
+Flask-SQLAlchemy==2.4.0
+Flask-HTTPAuth==3.3.0
 requests==2.23.0
-pymysql
-werkzeug.security
-flaskext.mysql
-flask-mysqldb
-flask_table
+
+Flask==1.1.1
+Flask-Migrate==2.5.2
+psycopg2==2.8.3
