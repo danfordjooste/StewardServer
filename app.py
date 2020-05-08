@@ -37,14 +37,11 @@ def index():
     oneItem = User.query.filter_by(username="test2").all()
     return render_template('add_user.html', myUser=myUser,oneItem=oneItem)
 
-@app.route('/post_user', methods=['POST'])
+@app.route('/get_user', methods=['GET'])
 def post_user():
-    user = User(request.form['username'], request.form['email'])
-    # this add to the database the user
-    db.session.add(user)
-    # this saves this data in the database
-    db.session.commit()
-    return redirect('/')
+    resp = jsonify('Successful GET')
+    resp.status_code = 200
+    return resp
 
 @app.route('/jsonpost_user', methods=['POST'])
 def jsonpost_user():
