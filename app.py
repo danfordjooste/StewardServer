@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask import request, redirect, render_template
+from flask import request, redirect, render_template, jsonify
 from flask_migrate import Migrate
 
 app = Flask(__name__)
@@ -21,8 +21,8 @@ migrate = Migrate(app, db)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True)
-    email = db.Column(db.String(120), unique=True)
+    username = db.Column(db.String(80), unique=False)
+    email = db.Column(db.String(120), unique=False)
 
     def __init__(self, username, email):
             self.username = username
@@ -44,7 +44,19 @@ def post_user():
     db.session.add(user)
     # this saves this data in the database
     db.session.commit()
-    return redirect(url_for('index'))
+    return redirect('/')
+
+@app.route('/jsonpost_user', methods=['POST'])
+def jsonpost_user():
+    user = User(request.json['username'], request.json['email'])
+    # this add to the database the user
+    db.session.add(user)
+    # this saves this data in the database
+    db.session.commit()
+    resp = jsonify('User added successfully!')
+    resp.status_code = 200
+    return resp
+    #return redirect('/')
 
 
 if __name__ == "__main__":
