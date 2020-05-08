@@ -4,8 +4,12 @@ from flask import request, redirect, render_template
 from flask_migrate import Migrate
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost/flasktut'
-app.config['SECRET_KEY'] = 'super-secret'
+
+SQLALCHEMY_DATABASE_URI = os.environ.get(
+    'DATABASE_URI',
+    'postgresql://postgres:root@localhost/flasktut1')
+    
+#app.config['SECRET_KEY'] = 'super-secret'
 #app.config['SECURITY_REGISTERABLE'] = True
 #app.debug = True
 db = SQLAlchemy(app)
