@@ -6,14 +6,16 @@ from flask_migrate import Migrate
 
 app = Flask(__name__)
 
-SQLALCHEMY_DATABASE_URI = os.environ.get(
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URI',
     'postgresql://postgres:root@localhost/flasktut1')
+
     
 #app.config['SECRET_KEY'] = 'super-secret'
 #app.config['SECURITY_REGISTERABLE'] = True
 #app.debug = True
 db = SQLAlchemy(app)
+#db.init_app(app)
 migrate = Migrate(app, db)
 
 
