@@ -1,7 +1,7 @@
 import os
 from flask import Flask
-import datetime
 from flask_sqlalchemy import SQLAlchemy
+import datetime
 from flask import request, redirect, url_for, render_template, jsonify
 from flask_migrate import Migrate
 
@@ -10,6 +10,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URI',
     'postgresql://postgres:root@localhost/flasktut1')
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 #app.debug=True
     
 #app.config['SECRET_KEY'] = 'super-secret'
