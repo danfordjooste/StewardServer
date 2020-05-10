@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+    <article>
+        <header>
+          <h1>Wine Steward Database</h1>
+      </article>
+
+<head>    
+<p>
+Time: {{currentTime}}<br>Day: {{currentDay}}<br><br>
+</p>
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+</head>
+<body>
+  <article>
+    <header>
+      <h1>On / Off Times:</h1>
+  </article>
+    <table style="float:center">
+      <tr>
+        <th></th>
+        <th>Monday</th>
+        <th>Tuesday</th>
+        <th>Wednesday</th>
+        <th>Thursday</th>
+        <th>Friday</th>
+        <th>Saturday</th>
+        <th>Sunday</th>
+      </tr>
+        {% for timeDB in onTime %}
+        <tr>
+            <td>ON TIME</td>
+            <td>{{timeDB.mon}}</td>
+            <td>{{timeDB.tue}}</td>
+            <td>{{timeDB.wed}}</td>
+            <td>{{timeDB.thu}}</td>
+            <td>{{timeDB.fri}}</td>
+            <td>{{timeDB.sat}}</td>
+            <td>{{timeDB.sun}}</td>
+        </tr>
+            {% endfor %}
+        {% for timeDB in offTime %}
+        <tr>
+            <td>OFF TIME</td>
+            <td>{{timeDB.mon}}</td>
+            <td>{{timeDB.tue}}</td>
+            <td>{{timeDB.wed}}</td>
+            <td>{{timeDB.thu}}</td>
+            <td>{{timeDB.fri}}</td>
+            <td>{{timeDB.sat}}</td>
+            <td>{{timeDB.sun}}</td>
+        </tr>
+            {% endfor %}
+    </table>
+    <form method="GET" action="/editOnTime">
+      <input type="submit" value="EDIT ON TIME">
+    </form>
+    <form method="GET" action="/editOffTime">
+      <input type="submit" value="EDIT OFF TIME">
+  </form>
+
+  <article>
+    <header>
+      <h1>Devices:</h1>
+  </article>
+<table style="float:center">
+  <tr>
+    <th>id</th>
+    <th>deviceNum</th>
+    <th>deviceName</th>
+    <th>On/Off</th>
+    <th>Last Battery</th>
+    <th>Last rcPeriod</th>
+    <th>Last Update</th>
+  </tr>
+  {% for deviceDB in myDevice %}
+  <tr>
+    <td>{{deviceDB.id}}</td>
+    <td>{{deviceDB.deviceNum}}</td>
+    <td>{{deviceDB.deviceName}}</td>
+    <td>{{deviceDB.OnOff}}</td>
+    <td>{{deviceDB.last_Battery}}</td>
+    <td>{{deviceDB.last_rcPeriod}}</td>
+    <td>{{deviceDB.last_update}}</td>
+  </tr>
+      {% endfor %}
+
+</table>
+<form method="GET" action="/editDeviceName">
+  <input type="submit" value="EDIT DEVICE NAMES">
+</form>
+
+</style>
+</head>
+<body>
+  <article>
+    <header>
+      <h1>Database:</h1>
+  </article>
+<table style="float:center">
+  <tr>
+    <th>id</th>
+    <th>deviceNum</th>
+    <th>deviceName</th>
+    <th>pourVolume</th>
+    <th>approxTime</th>
+    <th>commitTime</th>
+    <th>battVolt</th>
+    <th>timerCounter</th>
+    <th>pourTime</th>
+    <th>pulseCount</th>
+  </tr>
+  {% for pourDB in myPour %}
+  <tr>
+    <td>{{pourDB.id}}</td>
+    <td>{{pourDB.deviceNum}}</td>
+    <td>{{pourDB.deviceName}}</td>
+    <td>{{pourDB.pourVolume}}</td>
+    <td>{{pourDB.approxTime}}</td>
+    <td>{{pourDB.commitTime}}</td>
+    <td>{{pourDB.battVolt}}</td>
+    <td>{{pourDB.timerCounter}}</td>
+    <td>{{pourDB.pourTime}}</td>
+    <td>{{pourDB.pulseCount}}</td>
+  </tr>
+      {% endfor %}
+
+</table>
+<p>This is some text to be wrapped around the table.</p>
+
+</body>
+</html>
