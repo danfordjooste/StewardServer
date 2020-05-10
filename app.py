@@ -1,15 +1,16 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import datetime
 from flask import request, redirect, url_for, render_template, jsonify
-from flask_migrate import Migrate
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
+import datetime
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URI',
-    'postgresql://postgres:root@localhost/flasktut1')
+    'postgresql://postgres:root@localhost/stewDB')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #app.debug=True
     
@@ -17,8 +18,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #app.config['SECURITY_REGISTERABLE'] = True
 #app.debug = True
 db = SQLAlchemy(app)
-#db.init_app(app)
-migrate = Migrate(app, db)
+
+migrate = Migrate(app,db)
+manager = Manager(app)
+manager.add_command('db', MigrateCommand)
 
 
 class pourDB(db.Model):
@@ -216,4 +219,5 @@ def jsonpost_user():
 
 
 if __name__ == "__main__":
+    #manager.run()
     app.run()
