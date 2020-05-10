@@ -212,7 +212,7 @@ def jsonpost_user():
     
     db.session.add(pourInfo)# this add to the database the user
     db.session.commit()
-    resp = jsonify('Successful Transfer')
+    resp = jsonify('Successful Transfer!')
     resp.status_code = 200
     return resp
     #return redirect('/')
