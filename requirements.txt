@@ -7,4 +7,4 @@ Flask-Migrate==2.5.2
 psycopg2==2.8.3
 
 datetime==2.11.1
-flask_script
+flask_script==2.0.6
