@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URI',
     'postgresql://postgres:root@localhost/flasktut1')
-SQLALCHEMY_TRACK_MODIFICATIONS = False
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #app.debug=True
     
 #app.config['SECRET_KEY'] = 'super-secret'

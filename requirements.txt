@@ -6,4 +6,4 @@ Flask==1.1.1
 Flask-Migrate==2.5.2
 psycopg2==2.8.3
 
-datetime==3.8.3
+datetime==3.2.6
