@@ -21,6 +21,7 @@
     <th>Last Battery</th>
     <th>Last rcPeriod</th>
     <th>Last Update</th>
+    <th>Resets</th>
   </tr>
   {% for deviceDB in myDevice %}
   <tr>
@@ -31,13 +32,14 @@
     <td>{{deviceDB.last_battVolt}}</td>
     <td>{{deviceDB.last_rcPeriod}}</td>
     <td>{{deviceDB.last_update}}</td>
+    <td>{{deviceDB.resets}}</td>
   </tr>
       {% endfor %}
 
 </table>
 
 <form method="POST" autocomplete="off">
-  <label for="lname">id to edit:</label><input type="text" id="deviceID" name="deviceID" ><br><br>
+  <label for="lname">id to edit:</label><input type="text" id="deviceID" name="deviceID" value={{id_needed}}><br><br>
   <label for="lname">{{Description}}</label><input type="text" id="newDeviceDetail" name="newDeviceDetail"><br><br>
   <input type="submit" value="Submit">
 </form>

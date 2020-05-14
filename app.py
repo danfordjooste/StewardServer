@@ -59,14 +59,16 @@ class deviceDB(db.Model):
     last_battVolt = db.Column(db.Integer)
     last_rcPeriod = db.Column(db.Integer)
     last_update = db.Column(db.String(20))
+    resets = db.Column(db.Integer)
 
-    def __init__(self, deviceNum, deviceName, OnOff, last_battVolt, last_rcPeriod, last_update):
+    def __init__(self, deviceNum, deviceName, OnOff, last_battVolt, last_rcPeriod, last_update,resets):
             self.deviceNum = deviceNum
             self.deviceName = deviceName
             self.OnOff = OnOff
             self.last_battVolt = last_battVolt
             self.last_rcPeriod = last_rcPeriod
             self.last_update = last_update
+            self.resets = resets
     
     def __repr__(self):
         return '<deviceDB %r>' % self.deviceNum
@@ -193,29 +195,19 @@ def editDeviceName():
         return redirect(url_for('index'))
     else:
         myDevice = deviceDB.query.all()
-        return render_template('editDeviceDetail.html', title='Edit Device Name:', myDevice=myDevice,Description='Enter New Device Name')
+        return render_template('editDeviceDetail.html', title='Edit Device Name:', myDevice=myDevice,Description='Enter New Device Name',id_needed ='')
     
-@app.route('/editDeviceNum',methods=['GET','POST'])
-def editDeviceNum():
+@app.route('/addNewDevice',methods=['GET','POST'])
+def addNewDevice():
     if request.method == 'POST':
-        deviceID = request.form['deviceID']
-        editDevice = deviceDB.query.get({"id": deviceID})
-        editDevice.deviceNum=request.form['newDeviceDetail']
+        device = deviceDB('0', 'newName', 0, 0, 0, '0',0)
+        device.deviceNum=request.form['newDeviceDetail']
+        db.session.add(device)
         db.session.commit()
         return redirect(url_for('index'))
     else:
         myDevice = deviceDB.query.all()
-        return render_template('editDeviceDetail.html', title='Edit Device Name:', myDevice=myDevice, Description='Enter New Device Num:')
-
-@app.route('/addNewDevice', methods=['POST'])
-def addNewDevice():
-    dt = datetime.datetime.now()#gets local time
-    currentDay = dt.weekday()
-    currentTime = dt.strftime("%D %H:%M:%S")
-    device = deviceDB('deviceNum', 'newName', 0, 0, 0, 'currentTime')
-    db.session.add(device)
-    db.session.commit()
-    return redirect(url_for('index'))
+        return render_template('editDeviceDetail.html', title='New Device:', myDevice=myDevice, Description='Enter New Device Num:',id_needed='n/a')
 
 
 @app.route('/deleteDevice',methods=['GET','POST'])

@@ -72,7 +72,7 @@ table, th, td {
   </article>
   <form method="GET" action="/editDeviceName">
     <input type="submit" value="EDIT DEVICE NAMES"></form>
-  <form method="POST" action="/addNewDevice">
+  <form method="GET" action="/addNewDevice">
     <input type="submit" value="ADD NEW DEVICE"></form>
   <form method="GET" action="/deleteDevice">
     <input type="submit" value="DELETE EXISTING DEVICE">
@@ -87,6 +87,7 @@ table, th, td {
     <th>Last Battery</th>
     <th>Last rcPeriod</th>
     <th>Last Update</th>
+    <th>Resets</th>
   </tr>
   {% for deviceDB in myDevice %}
   <tr>
@@ -97,6 +98,7 @@ table, th, td {
     <td>{{deviceDB.last_battVolt}}</td>
     <td>{{deviceDB.last_rcPeriod}}</td>
     <td>{{deviceDB.last_update}}</td>
+    <td>{{deviceDB.resets}}</td>
   </tr>
       {% endfor %}
 

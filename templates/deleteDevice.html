@@ -21,6 +21,7 @@
     <th>Last Battery</th>
     <th>Last rcPeriod</th>
     <th>Last Update</th>
+    <th>Resets</th>
   </tr>
   {% for deviceDB in myDevice %}
   <tr>
@@ -31,6 +32,7 @@
     <td>{{deviceDB.last_battVolt}}</td>
     <td>{{deviceDB.last_rcPeriod}}</td>
     <td>{{deviceDB.last_update}}</td>
+    <td>{{deviceDB.resets}}</td>
   </tr>
       {% endfor %}
 
