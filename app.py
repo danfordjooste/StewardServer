@@ -220,7 +220,7 @@ def deleteDevice():
         return redirect(url_for('index'))
     else:
         myDevice = deviceDB.query.all()
-        return render_template('deleteDevice.html', title='Delete Device:', myDevice=myDevice)
+        return render_template('deleteDevice.html', title='Delete Device:')#, myDevice=myDevice)
 
 @app.route('/deleteEntry',methods=['GET','POST'])
 def deleteEntry():
@@ -271,5 +271,5 @@ def jsonpost_data():
 
 
 if __name__ == "__main__":
-    #manager.run()
+    manager.run()
     app.run()
