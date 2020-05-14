@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URI',
-    'postgresql://postgres:root@localhost/stewDB')
+    'postgresql://postgres:root@localhost/stewDB1')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.debug=True
     
@@ -271,5 +271,5 @@ def jsonpost_data():
 
 
 if __name__ == "__main__":
-    manager.run()
+    #manager.run()
     app.run()
