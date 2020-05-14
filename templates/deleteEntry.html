@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>{{title}}</h1>
+
+<p>This action is NOT reversible</p>
+
+<style>
+  table, th, td {
+    border: 1px solid black;
+  }
+  </style>
+
+<table style="float:center">
+  <tr>
+    <th>id</th>
+    <th>deviceNum</th>
+    <th>deviceName</th>
+    <th>pourVolume</th>
+    <th>approxTime</th>
+    <th>commitTime</th>
+    <th>battVolt</th>
+    <th>timerCounter</th>
+    <th>pourTime</th>
+    <th>pulseCount</th>
+  </tr>
+  {% for pourDB in myPour %}
+  <tr>
+    <td>{{pourDB.id}}</td>
+    <td>{{pourDB.deviceNum}}</td>
+    <td>{{pourDB.deviceName}}</td>
+    <td>{{pourDB.pourVolume}}</td>
+    <td>{{pourDB.approxTime}}</td>
+    <td>{{pourDB.commitTime}}</td>
+    <td>{{pourDB.battVolt}}</td>
+    <td>{{pourDB.timerCounter}}</td>
+    <td>{{pourDB.pourTime}}</td>
+    <td>{{pourDB.pulseCount}}</td>
+  </tr>
+      {% endfor %}
+
+</table>
+<br>
+<form method="POST"autocomplete="off">
+  <label for="lname">Delete id:</label><input type="text" id="delID" name="delID">
+  <input type="submit" value="Submit">
+</form>
+
+</body>
+</html>

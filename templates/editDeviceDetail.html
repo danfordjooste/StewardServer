@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>{{title}}</h1>
+
+<p>Which ID would you like to delete? 11:35<br>11:35pm = 23:35</p><br><br>
+
+<style>
+  table, th, td {
+    border: 1px solid black;
+  }
+  </style>
+
+<table style="float:center">
+  <tr>
+    <th>id</th>
+    <th>deviceNum</th>
+    <th>deviceName</th>
+    <th>On/Off</th>
+    <th>Last Battery</th>
+    <th>Last rcPeriod</th>
+    <th>Last Update</th>
+  </tr>
+  {% for deviceDB in myDevice %}
+  <tr>
+    <td>{{deviceDB.id}}</td>
+    <td>{{deviceDB.deviceNum}}</td>
+    <td>{{deviceDB.deviceName}}</td>
+    <td>{{deviceDB.OnOff}}</td>
+    <td>{{deviceDB.last_battVolt}}</td>
+    <td>{{deviceDB.last_rcPeriod}}</td>
+    <td>{{deviceDB.last_update}}</td>
+  </tr>
+      {% endfor %}
+
+</table>
+
+<form method="POST" autocomplete="off">
+  <label for="lname">id to edit:</label><input type="text" id="deviceID" name="deviceID" ><br><br>
+  <label for="lname">{{Description}}</label><input type="text" id="newDeviceDetail" name="newDeviceDetail"><br><br>
+  <input type="submit" value="Submit">
+</form>
+
+</body>
+</html>

@@ -1,10 +1,11 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask import request, redirect, url_for, render_template, jsonify
+from flask import request, redirect, url_for, render_template, jsonify, json
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 import datetime
+from pytz import timezone
 
 app = Flask(__name__)
 
@@ -12,7 +13,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URI',
     'postgresql://postgres:root@localhost/stewDB')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-#app.debug=True
+app.debug=True
     
 #app.config['SECRET_KEY'] = 'super-secret'
 #app.config['SECURITY_REGISTERABLE'] = True
@@ -54,10 +55,10 @@ class deviceDB(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     deviceNum = db.Column(db.String(20))
     deviceName = db.Column(db.String(40))
-    OnOff = db.Column(db.Integer)
+    OnOff = db.Column(db.String(20))
     last_battVolt = db.Column(db.Integer)
     last_rcPeriod = db.Column(db.Integer)
-    last_update = db.Column(db.Integer)
+    last_update = db.Column(db.String(20))
 
     def __init__(self, deviceNum, deviceName, OnOff, last_battVolt, last_rcPeriod, last_update):
             self.deviceNum = deviceNum
@@ -103,119 +104,183 @@ def index():
     offTime = timeDB.query.filter_by(id='2')
     return render_template('home.html', myPour=myPour, currentTime=currentTime, currentDay=currentDay, myDevice=myDevice, onTime=onTime,offTime=offTime)
 
-@app.route('/addOnTime')
-def addOnTime():
-    return render_template('newTime.html', title='Add ON Time:')
+@app.route('/readMe')
+def readMe():
+    return render_template('readMe.html', title="READ ME")
 
-@app.route('/addOnTimeDatabase',methods=['POST'])
-def addOnTimeDatabase():
-        onTime = timeDB(request.form['mon'],request.form['tue'],request.form['wed'],request.form['thu'],request.form['fri'],request.form['sat'],request.form['sun'])
-        db.session.add(onTime)
-        db.session.commit()    
+@app.route('/addTime',methods=['GET','POST'])
+def addTime():
+    editTime = 0
+    if request.method == 'POST':
+        addTime = timeDB(request.form['mon'],request.form['tue'],request.form['wed'],request.form['thu'],request.form['fri'],request.form['sat'],request.form['sun'])
+        db.session.add(addTime)
+        db.session.commit()  
         return redirect(url_for('index'))
+    else:
+        return render_template('editTime.html',title='Start Time Database:', editTime=editTime)
 
-@app.route('/editOnTime')
+
+@app.route('/editOnTime',methods=['GET','POST'])
 def editOnTime():
-    return render_template('editOnTime.html',title='Edit ON Time:')
+    editTime = timeDB.query.get({"id": 1})
+    if request.method == 'POST':
+        editTime.mon = request.form['mon']
+        editTime.tue = request.form['tue']
+        editTime.wed = request.form['wed']
+        editTime.thu = request.form['thu']
+        editTime.fri = request.form['fri']
+        editTime.sat = request.form['sat']
+        editTime.sun = request.form['sun']
+        db.session.commit()  
+        return redirect(url_for('index'))
+    else:
+        return render_template('editTime.html',title='Edit ON Time:', editTime=editTime)
 
-@app.route('/editOnTimeDatabase',methods=['POST'])
-def editOnTimeDatabase():
-    editOn = timeDB.query.get({"id": 1})
-    editOn.mon = request.form['mon']
-    editOn.tue = request.form['tue']
-    editOn.wed = request.form['wed']
-    editOn.thu = request.form['thu']
-    editOn.fri = request.form['fri']
-    editOn.sat = request.form['sat']
-    editOn.sun = request.form['sun']
-    db.session.commit()  
-    return redirect(url_for('index'))
 
-@app.route('/editOffTime')
+@app.route('/editOffTime',methods=['GET','POST'])
 def editOffTime():
-    return render_template('editOffTime.html',title='Edit OFF Time:')
-
-@app.route('/editOffTimeDatabase',methods=['POST'])
-def editOffTimeDatabase():
-    editOn = timeDB.query.get({"id": 2})
-    editOn.mon = request.form['mon']
-    editOn.tue = request.form['tue']
-    editOn.wed = request.form['wed']
-    editOn.thu = request.form['thu']
-    editOn.fri = request.form['fri']
-    editOn.sat = request.form['sat']
-    editOn.sun = request.form['sun']
-    db.session.commit()  
-    return redirect(url_for('index'))
+    editTime = timeDB.query.get({"id": 2})
+    if request.method == 'POST':
+        editTime.mon = request.form['mon']
+        editTime.tue = request.form['tue']
+        editTime.wed = request.form['wed']
+        editTime.thu = request.form['thu']
+        editTime.fri = request.form['fri']
+        editTime.sat = request.form['sat']
+        editTime.sun = request.form['sun']
+        db.session.commit()  
+        return redirect(url_for('index'))
+    else:
+        return render_template('editTime.html',title='Edit OFF Time:', editTime=editTime)
 
 @app.route('/getTime', methods=['GET'])
 def getTime():
     dt = datetime.datetime.now()#gets local time
-    currentTime = dt.strftime("%D %H:%M:%S")
-    return '%s.%s##' % (currentTime)
+    currentTime = dt.strftime("%H:%M:%S")
+    return '%s##' % (currentTime)
 
-@app.route('/getOperatingTime', methods=['GET'])
-def getOperatingTime():
+@app.route('/getPSTOpen', methods=['GET'])
+def getPSTOpen():
     on= timeDB.query.get({"id": 1})
-    off = timeDB.query.get({"id": 2})
 
     dt = datetime.datetime.now()#gets local time
     currentDay = dt.weekday()
-    if currentDay == 0:
-        onTime = on.mon
-        offTime = off.mon
-    elif currentDay == 1:
-        onTime = on.tue 
-        offTime = off.tue
-    elif currentDay == 2:
-        onTime = on.wed 
-        offTime = off.wed
-    elif currentDay == 3:
-        onTime = on.thu 
-        offTime = off.thu
-    elif currentDay == 4:
-        onTime = on.fri 
-        offTime = off.fri
-    elif currentDay == 5:
-        onTime = on.sat 
-        offTime = off.sat
-    else:
-        onTime = on.sun
-        offTime = off.sun
-    return 'ON %s OFF %s##' % (onTime, offTime)
+    if currentDay == 0:     onTime = on.mon
+    elif currentDay == 1:   onTime = on.tue 
+    elif currentDay == 2:   onTime = on.wed 
+    elif currentDay == 3:   onTime = on.thu 
+    elif currentDay == 4:   onTime = on.fri 
+    elif currentDay == 5:   onTime = on.sat 
+    else:   onTime = on.sun
+    return '%s##' % (onTime)
 
-@app.route('/get_user', methods=['GET'])
-def post_user():
-    resp = jsonify('Successful GET')
-    resp.status_code = 200
-    return resp
+@app.route('/getPSTClose', methods=['GET'])
+def getPSTClose():
+    off = timeDB.query.get({"id": 2})
+    dt = datetime.datetime.now()#gets local time
+    currentDay = dt.weekday()
+    if currentDay == 0:     offTime = off.mon
+    elif currentDay == 1:   offTime = off.tue
+    elif currentDay == 2:   offTime = off.wed
+    elif currentDay == 3:   offTime = off.thu
+    elif currentDay == 4:   offTime = off.fri
+    elif currentDay == 5:   offTime = off.sat
+    else:   offTime = off.sun
+    return '%s##' % (offTime)
+
+@app.route('/editDeviceName',methods=['GET','POST'])
+def editDeviceName():
+    if request.method == 'POST':
+        deviceID = request.form['deviceID']
+        editDevice = deviceDB.query.get({"id": deviceID})
+        editDevice.deviceName=request.form['newDeviceDetail']
+        db.session.commit()
+        return redirect(url_for('index'))
+    else:
+        myDevice = deviceDB.query.all()
+        return render_template('editDeviceDetail.html', title='Edit Device Name:', myDevice=myDevice,Description='Enter New Device Name')
+    
+@app.route('/editDeviceNum',methods=['GET','POST'])
+def editDeviceNum():
+    if request.method == 'POST':
+        deviceID = request.form['deviceID']
+        editDevice = deviceDB.query.get({"id": deviceID})
+        editDevice.deviceNum=request.form['newDeviceDetail']
+        db.session.commit()
+        return redirect(url_for('index'))
+    else:
+        myDevice = deviceDB.query.all()
+        return render_template('editDeviceDetail.html', title='Edit Device Name:', myDevice=myDevice, Description='Enter New Device Num:')
+
+@app.route('/addNewDevice', methods=['POST'])
+def addNewDevice():
+    dt = datetime.datetime.now()#gets local time
+    currentDay = dt.weekday()
+    currentTime = dt.strftime("%D %H:%M:%S")
+    device = deviceDB('deviceNum', 'newName', 0, 0, 0, 'new')
+    db.session.add(device)
+    db.session.commit()
+    return redirect(url_for('index'))
+
+
+@app.route('/deleteDevice',methods=['GET','POST'])
+def deleteDevice():
+    if request.method == 'POST':
+        deviceID = request.form['delID']
+        delDevice = deviceDB.query.get({"id": deviceID})
+        db.session.delete(delDevice)
+        db.session.commit()
+        return redirect(url_for('index'))
+    else:
+        myDevice = deviceDB.query.all()
+        return render_template('deleteDevice.html', title='Delete Device:', myDevice=myDevice)
+
+@app.route('/deleteEntry',methods=['GET','POST'])
+def deleteEntry():
+    if request.method == 'POST':
+        pourID = request.form['delID']
+        delEntry = pourDB.query.get({"id": pourID})
+        db.session.delete(delEntry)
+        db.session.commit()
+        return redirect(url_for('index'))
+    else:
+        myPour = pourDB.query.all()
+        return render_template('deleteEntry.html', title='Delete Entry:', myPour=myPour)
+
 
 @app.route('/jsonpost_status', methods=['POST'])
 def jsonpost_status():
     dt = datetime.datetime.now()#gets local time
+    currentDay = dt.weekday()
     currentTime = dt.strftime("%D %H:%M:%S")
 
-    device = pourDB(request.json['deviceNum'], deviceName, request.json['OnOff'], request.json['last_battVolt'], request.json['last_rcPeriod'], currentTime)
-    
+    content = request.get_json()
+    thisDeviceNum = content["deviceNum"]
+    thisDeviceInfo = deviceDB.query.filter_by(deviceNum=thisDeviceNum).first()
+    thisDeviceInfo.OnOff = request.json['OnOff']
+    thisDeviceInfo.last_battVolt = request.json['last_battVolt']
+    thisDeviceInfo.last_rcPeriod = request.json['last_rcPeriod']
+    thisDeviceInfo.last_update = currentTime
     db.session.commit()
-    resp = jsonify('{}',deviceName)#sends device name back
-    resp.status_code = 200
-    return resp
+    return '1##'
 
 
 @app.route('/jsonpost_data', methods=['POST'])
-def jsonpost_user():
+def jsonpost_data():
     dt = datetime.datetime.now()#gets local time
     currentTime = dt.strftime("%D %H:%M:%S")
 
-    pourInfo = pourDB(request.json['deviceNum'], request.json['deviceName'], request.json['pourVolume'], request.json['approxTime'],currentTime, request.json['battVolt'], request.json['timerCounter'], request.json['pourTime'], request.json['pulseCount'])
+    content = request.get_json()
+    thisDeviceNum = content["deviceNum"]
+    thisDeviceInfo = deviceDB.query.filter_by(deviceNum=thisDeviceNum).first()
+
+    pourInfo = pourDB(thisDeviceNum, thisDeviceInfo.deviceName, request.json['pourVolume'], request.json['approxTime'],currentTime, request.json['battVolt'], request.json['timerCounter'], request.json['pourTime'], request.json['pulseCount'])
     
     db.session.add(pourInfo)# this add to the database the user
     db.session.commit()
-    resp = jsonify('Successful Transfer!')
+    resp = jsonify('1!##')
     resp.status_code = 200
     return resp
-    #return redirect('/')
 
 
 if __name__ == "__main__":
