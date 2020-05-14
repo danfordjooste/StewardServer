@@ -13,7 +13,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URI',
     'postgresql://postgres:root@localhost/stewDB1')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.debug=True
+#app.debug=True
     
 #app.config['SECRET_KEY'] = 'super-secret'
 #app.config['SECURITY_REGISTERABLE'] = True
@@ -271,5 +271,5 @@ def jsonpost_data():
 
 
 if __name__ == "__main__":
-    #manager.run()
+    manager.run()
     app.run()
