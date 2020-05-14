@@ -59,7 +59,7 @@ class deviceDB(db.Model):
     last_battVolt = db.Column(db.Integer)
     last_rcPeriod = db.Column(db.Integer)
     last_update = db.Column(db.String(20))
-    resets = db.Column(db.Integer)
+    resets = db.Column(db.Integer,nullable=True)
 
     def __init__(self, deviceNum, deviceName, OnOff, last_battVolt, last_rcPeriod, last_update,resets):
             self.deviceNum = deviceNum
