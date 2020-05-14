@@ -159,12 +159,12 @@ def getTime():
     currentTime = dt.strftime("%H:%M:%S")
     return '%s##' % (currentTime)
 
-@app.route('/getPSTOpen', methods=['GET'])
-def getPSTOpen():
-    on= timeDB.query.get({"id": 1})
-
-    dt = datetime.datetime.now()#gets local time
+@app.route('/getOperateTime', methods=['GET'])
+def getOperateTime():
+    dt = datetime.datetime.now()#gets weekday
     currentDay = dt.weekday()
+
+    on= timeDB.query.get({"id": 1})#find ON time
     if currentDay == 0:     onTime = on.mon
     elif currentDay == 1:   onTime = on.tue 
     elif currentDay == 2:   onTime = on.wed 
@@ -172,13 +172,7 @@ def getPSTOpen():
     elif currentDay == 4:   onTime = on.fri 
     elif currentDay == 5:   onTime = on.sat 
     else:   onTime = on.sun
-    return '%s##' % (onTime)
-
-@app.route('/getPSTClose', methods=['GET'])
-def getPSTClose():
-    off = timeDB.query.get({"id": 2})
-    dt = datetime.datetime.now()#gets local time
-    currentDay = dt.weekday()
+    off = timeDB.query.get({"id": 2})#find OFF time
     if currentDay == 0:     offTime = off.mon
     elif currentDay == 1:   offTime = off.tue
     elif currentDay == 2:   offTime = off.wed
@@ -186,7 +180,8 @@ def getPSTClose():
     elif currentDay == 4:   offTime = off.fri
     elif currentDay == 5:   offTime = off.sat
     else:   offTime = off.sun
-    return '%s##' % (offTime)
+    
+    return '%s!%s##' % (onTime,offTime)
 
 @app.route('/editDeviceName',methods=['GET','POST'])
 def editDeviceName():
@@ -217,7 +212,7 @@ def addNewDevice():
     dt = datetime.datetime.now()#gets local time
     currentDay = dt.weekday()
     currentTime = dt.strftime("%D %H:%M:%S")
-    device = deviceDB('deviceNum', 'newName', 0, 0, 0, 'new')
+    device = deviceDB('deviceNum', 'newName', 0, 0, 0, 'currentTime')
     db.session.add(device)
     db.session.commit()
     return redirect(url_for('index'))
