@@ -181,7 +181,7 @@ def getOperateTime():
     elif currentDay == 5:   offTime = off.sat
     else:   offTime = off.sun
     
-    return '%s!%s##' % (onTime,offTime)
+    return '%02d!%02d##' % (onTime,offTime)
 
 @app.route('/editDeviceName',methods=['GET','POST'])
 def editDeviceName():
