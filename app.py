@@ -5,7 +5,8 @@ from flask import request, redirect, url_for, render_template, jsonify, json
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 import datetime
-from pytz import timezone
+import pytz
+
 
 app = Flask(__name__)
 
@@ -95,9 +96,14 @@ class timeDB(db.Model):
     def __repr__(self):
         return '<timeDB %r>' % self.mon
 
+def pacificTime():
+    pacific = pytz.timezone('US/Pacific')
+    dt = datetime.datetime.now(pacific)
+    return dt
+
 @app.route('/')
 def index():
-    dt = datetime.datetime.now()#gets local time
+    dt = pacificTime()
     currentDay = dt.weekday()
     currentTime = dt.strftime("%D %H:%M:%S")
     myPour = pourDB.query.all()
@@ -157,13 +163,14 @@ def editOffTime():
 
 @app.route('/getTime', methods=['GET'])
 def getTime():
-    dt = datetime.datetime.now()#gets local time
+    dt = pacificTime()
     currentTime = dt.strftime("%H:%M:%S")
     return '%s##' % (currentTime)
 
 @app.route('/getOperateTime', methods=['GET'])
 def getOperateTime():
-    dt = datetime.datetime.now()#gets weekday
+    
+    dt = pacificTime()
     currentDay = dt.weekday()
 
     on= timeDB.query.get({"id": 1})#find ON time
@@ -237,24 +244,31 @@ def deleteEntry():
 
 @app.route('/jsonpost_status', methods=['POST'])
 def jsonpost_status():
-    dt = datetime.datetime.now()#gets local time
+    dt = pacificTime()
     currentDay = dt.weekday()
     currentTime = dt.strftime("%D %H:%M:%S")
 
     content = request.get_json()
     thisDeviceNum = content["deviceNum"]
     thisDeviceInfo = deviceDB.query.filter_by(deviceNum=thisDeviceNum).first()
-    thisDeviceInfo.OnOff = request.json['OnOff']
     thisDeviceInfo.last_battVolt = request.json['last_battVolt']
     thisDeviceInfo.last_rcPeriod = request.json['last_rcPeriod']
     thisDeviceInfo.last_update = currentTime
+
+    state = request.json['OnOff']
+    if thisDeviceInfo.OnOff=='ON'and state=='ON':
+        thisDeviceInfo.resets = thisDeviceInfo.resets + 1
+    else:
+        thisDeviceInfo.resets = 0
+
+    thisDeviceInfo.OnOff = state
     db.session.commit()
     return '1##'
 
 
 @app.route('/jsonpost_data', methods=['POST'])
 def jsonpost_data():
-    dt = datetime.datetime.now()#gets local time
+    dt = pacificTime()
     currentTime = dt.strftime("%D %H:%M:%S")
 
     content = request.get_json()
